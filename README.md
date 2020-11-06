@@ -1,6 +1,10 @@
 # Graphics
 Simple class for console drawing.
 
+## Variables:
+- *const short&* width
+- *const short&* height
+
 ## Static Methods:
 - *COORD* **GetConsoleSize**()
 
