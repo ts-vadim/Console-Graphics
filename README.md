@@ -1,6 +1,17 @@
 # Graphics
 Simple class for console drawing.
 
+## Static Methods:
+- *COORD* GetConsoleSize()
+
+## Methods:
+- *void* Clear(char c = ' ')
+- *void* Draw()
+- *void* Char(int x, int y, char c)
+- *void* Rect(RECT area, char fill = '#', char stroke = '#')
+- *void* Text(int x, int y, const char* format, ...)
+- *void* Cursor(int x, int y)
+
 ## Usage:
 ```c++
 Graphics graphics;
