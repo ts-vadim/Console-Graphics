@@ -1,5 +1,5 @@
 # Graphics
-Simple class for console drawing.
+Simple class for drawing in console.
 
 ## Variables:
 - *const short&* width
