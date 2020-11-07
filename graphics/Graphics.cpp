@@ -25,6 +25,7 @@ Graphics::Graphics(COORD size)
 Graphics::~Graphics()
 {
 	delete[] m_screen;
+	delete[] m_output_screen;
 }
 
 COORD Graphics::GetConsoleSize()
