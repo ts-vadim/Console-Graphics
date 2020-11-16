@@ -3,7 +3,6 @@ Simple classes for drawing in console.
 
 ## Classes:
 - [Graphics](https://github.com/ts-vadim/Console-Graphics/blob/main/Graphics.md)
-<a href="https://github.com/ts-vadim/Console-Graphics/blob/main/Graphics.md" target="_blank">Graphics</a>
 - [FrameBuffer](https://github.com/ts-vadim/Console-Graphics/blob/main/FrameBuffer.md)
 - [Drawable](https://github.com/ts-vadim/Console-Graphics/blob/main/Drawable.md)
 
