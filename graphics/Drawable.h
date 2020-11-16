@@ -12,7 +12,4 @@ public:
 	Vector2 position;
 
 	virtual void Draw(Graphics& graphics) = 0;
-
-protected:
-	
 };
