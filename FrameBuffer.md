@@ -1,13 +1,9 @@
 # *class* FrameBuffer
-Simple class for drawing in console.
 
 ## Variables:
 - *char\** buffer
 - *unsigned short* width
 - *unsigned short* height
-
-## Static Methods:
-- *COORD* **GetConsoleSize**()
 
 ## Constructors:
 - **FrameBuffer**()
