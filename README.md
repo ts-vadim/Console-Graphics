@@ -1,25 +1,7 @@
-# *class* Graphics
-Simple class for drawing in console.
+# Graphics
+Simple classes for drawing in console.
 
-## Variables:
-- *const short&* width
-- *const short&* height
-
-## Static Methods:
-- *COORD* **GetConsoleSize**()
-
-## Methods:
-- **Display**()
-- **Clear**(char c = ' ')
-- **Draw**(Drawable& drawable)
-- **Frame**(FrameBuffer& frame, int x, int y)
-- **Char**(int x, int y, char c)
-- **Rect**(RECT area, char fill = '#', char stroke = '#')
-- **Text**(int x, int y, const char* format, ...)
-- **Text**(int x, int y, int max_length, const char* format, ...)
-- **Cursor**(int x, int y)
-
-## Usage:
+## Example:
 ```c++
 Graphics graphics;
 graphics.Clear();
