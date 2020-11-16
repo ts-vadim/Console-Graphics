@@ -1,4 +1,4 @@
-# Graphics
+# *class* Graphics
 Simple class for drawing in console.
 
 ## Variables:
@@ -9,12 +9,15 @@ Simple class for drawing in console.
 - *COORD* **GetConsoleSize**()
 
 ## Methods:
-- *void* **Clear**(char c = ' ')
-- *void* **Draw**()
-- *void* **Char**(int x, int y, char c)
-- *void* **Rect**(RECT area, char fill = '#', char stroke = '#')
-- *void* **Text**(int x, int y, const char* format, ...)
-- *void* **Cursor**(int x, int y)
+- **Display**()
+- **Clear**(char c = ' ')
+- **Draw**(Drawable& drawable)
+- **Frame**(FrameBuffer& frame, int x, int y)
+- **Char**(int x, int y, char c)
+- **Rect**(RECT area, char fill = '#', char stroke = '#')
+- **Text**(int x, int y, const char* format, ...)
+- **Text**(int x, int y, int max_length, const char* format, ...)
+- **Cursor**(int x, int y)
 
 ## Usage:
 ```c++
