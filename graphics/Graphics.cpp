@@ -5,28 +5,26 @@ Graphics::Graphics()
 {
 	m_hconsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD size = GetConsoleSize();
-	m_width = size.X;
-	m_height = size.Y;
-	m_screen = new char[m_width * m_height];
-	m_output_screen = new CHAR_INFO[m_width * m_height];
+	m_frame.Create(size.X, size.Y);
+	m_output_screen = new CHAR_INFO[m_frame.width * m_frame.height];
 	Clear();
 }
+
 
 Graphics::Graphics(COORD size)
 {
 	m_hconsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	m_width = size.X;
-	m_height = size.Y;
-	m_screen = new char[m_width * m_height];
-	m_output_screen = new CHAR_INFO[m_width * m_height];
+	m_frame.Create(size.X, size.Y);
+	m_output_screen = new CHAR_INFO[m_frame.width * m_frame.height];
 	Clear();
 }
 
+
 Graphics::~Graphics()
 {
-	delete[] m_screen;
 	delete[] m_output_screen;
 }
+
 
 COORD Graphics::GetConsoleSize()
 {
@@ -38,30 +36,59 @@ COORD Graphics::GetConsoleSize()
 }
 
 
+
+void Graphics::Resize(COORD size)
+{
+	delete[] m_output_screen;
+
+	m_frame.Create(size.X, size.Y);
+	m_output_screen = new CHAR_INFO[m_frame.width * m_frame.height];
+	Clear();
+}
+
+
+void Graphics::SetRenderTarget(FrameBuffer* frame)
+{
+	m_rendertarget = frame;
+}
+
+
+void Graphics::ReleaseRenderTarget()
+{
+	m_rendertarget = &m_frame;
+}
+
+
 void Graphics::Clear(char c)
 {
-	for (int i = 0; i < m_width * m_height; i++)
+	for (int i = 0; i < m_rendertarget->width * m_rendertarget->height; i++)
 	{
-		m_screen[i] = c;
-		m_output_screen[i].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-		m_output_screen[i].Char.AsciiChar = m_screen[i];
+		m_rendertarget->buffer[i] = c;
+		if (m_rendertarget == &m_frame)
+		{
+			m_output_screen[i].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+			m_output_screen[i].Char.AsciiChar = m_frame.buffer[i];
+		}
 	}
 }
 
-void Graphics::Draw()
+
+void Graphics::Display()
 {
-	for (int i = 0; i < m_width * m_height; i++)
-		m_output_screen[i].Char.AsciiChar = m_screen[i];
-	SMALL_RECT screen_write_area = { 0, 0, m_width, m_height };
-	WriteConsoleOutputA(m_hconsole, m_output_screen, { m_width, m_height }, { 0, 0 }, &screen_write_area);
+	for (int i = 0; i < m_frame.width * m_frame.height; i++)
+		m_output_screen[i].Char.AsciiChar = m_frame.buffer[i];
+	SMALL_RECT screen_write_area = { 0, 0, m_frame.width, m_frame.height };
+	WriteConsoleOutputA(m_hconsole, m_output_screen, { (SHORT)m_frame.width, (SHORT)m_frame.height }, { 0, 0 }, &screen_write_area);
 }
+
 
 void Graphics::Char(int x, int y, char c)
 {
-	if (!onScreen(x, y))
+	if (!m_rendertarget->onFrame(x, y))
 		return;
-	m_screen[x + m_width * y] = c;
+	m_rendertarget->buffer[x + m_rendertarget->width * y] = c;
 }
+
 
 void Graphics::Rect(RECT area, char fill, char stroke)
 {
@@ -69,15 +96,16 @@ void Graphics::Rect(RECT area, char fill, char stroke)
 	{
 		for (int x = area.left; x < area.right; x++)
 		{
-			if (!onScreen(x, y))
+			if (!m_rendertarget->onFrame(x, y))
 				continue;
 			char c = fill;
 			if (x == area.left || x == area.right - 1 || y == area.top || y == area.bottom - 1)
 				c = stroke;
-			m_screen[x + m_width * y] = c;
+			m_rendertarget->buffer[x + m_rendertarget->width * y] = c;
 		}
 	}
 }
+
 
 void Graphics::Text(int x, int y, const char* format, ...)
 {
@@ -88,15 +116,51 @@ void Graphics::Text(int x, int y, const char* format, ...)
 
 	for (int i = 0; i < strlen(m_text_buffer); i++)
 	{
-		if (onScreen(x + i, y))
-			m_screen[x + i + m_width * y] = m_text_buffer[i];
+		if (m_rendertarget->onFrame(x + i, y))
+			m_rendertarget->buffer[x + i + m_rendertarget->width * y] = m_text_buffer[i];
 	}
 }
 
-bool Graphics::onScreen(int x, int y)
+
+void Graphics::Text(int x, int y, int max_length, const char* format, ...)
 {
-	return x >= 0 && x < m_width && y >= 0 && y < m_height;
+	va_list args;
+	va_start(args, format);
+
+	vsnprintf_s(m_text_buffer, max_text_length, format, args);
+
+	for (int i = 0; i < strlen(m_text_buffer) && i < max_length; i++)
+	{
+		if (m_rendertarget->onFrame(x + i, y))
+			m_rendertarget->buffer[x + i + m_rendertarget->width * y] = m_text_buffer[i];
+	}
 }
+
+
+void Graphics::Frame(FrameBuffer& frame, int x, int y)
+{
+	for (int py = 0; py < frame.height; py++)
+	{
+		for (int px = 0; px < frame.width; px++)
+		{
+			if (!m_rendertarget->onFrame(x + px, y + py))
+				continue;
+			m_rendertarget->buffer[int(x + px + m_rendertarget->width * (y + py))] =
+				frame.buffer[px + py * frame.width];
+		}
+	}
+}
+
+
+void Graphics::Draw(Drawable& drawable)
+{
+	SetRenderTarget(&drawable.frame);
+	drawable.Draw(*this);
+	ReleaseRenderTarget();
+
+	Frame(drawable.frame, drawable.position.x, drawable.position.y);
+}
+
 
 void Graphics::Cursor(int x, int y)
 {
