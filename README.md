@@ -1,4 +1,4 @@
-# *class* Graphics
+# Graphics
 Simple class for drawing in console.
 
 ## Usage:
@@ -25,10 +25,3 @@ Graphics::Cursor(0, Graphics::height - 4);
 ```
 ## Output:
 <image width="600px" src="https://github.com/ts-vadim/Console-Graphics/blob/main/view.png">
-
-## TODO:
-- [x] Добавить цвета
-- [ ] Упростить работу с массивами символов
-- [ ] Добавить отрисовку линий
-- [x] Сделать класс статичным
-- [ ] Дать возможность читать символы с экрана
