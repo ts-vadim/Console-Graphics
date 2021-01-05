@@ -1,28 +1,34 @@
-# Graphics
-Simple classes for drawing in console.
+# *class* Graphics
+Simple class for drawing in console.
 
-## Classes:
-- [Graphics](https://github.com/ts-vadim/Console-Graphics/blob/main/Graphics.md)
-- [FrameBuffer](https://github.com/ts-vadim/Console-Graphics/blob/main/FrameBuffer.md)
-- [Drawable](https://github.com/ts-vadim/Console-Graphics/blob/main/Drawable.md)
-
-## TODO:
-- [ ] Добавить цвета
-- [ ] Упростить работу с массивами символов
-- [ ] Добавить отрисовку линий
-- [ ] Сделать класс статичным
-- [ ] Дать возможность читать символы с экрана
-
-## Example:
+## Usage:
 ```c++
-Graphics graphics;
-graphics.Clear();
+Graphics::Begin();
+Graphics::Clear();
 
-graphics.Rect({ 0, 0, 10, 5 }, '.');
-graphics.Text(0, 5, "It looks like %s game", "rogue");
+Graphics::Rect({ 1, 1, 28, 11 }, { ' ', 0 }, { '#', Graphics::ForeWhite | Graphics::ForeBright });
+Graphics::Text(2, 2, Graphics::ForeWhite | Graphics::Underscore, "Some text with %s", "underscore");
 
-graphics.Display();
-graphics.Cursor(0, graphics.height - 4);
+WORD framed =
+	Graphics::UpperLine |
+	Graphics::Underscore |
+	Graphics::LeftLine |
+	Graphics::RightLine;
+
+Graphics::Text(2, 4, Graphics::ForeWhite | framed, "Some framed text");
+
+Graphics::Char(4, 6, { '%', Graphics::ForeCyan });
+Graphics::Char(5, 6, { 'I', Graphics::ForeCyan | Graphics::Inverse });
+
+Graphics::Display();
+Graphics::Cursor(0, Graphics::height - 4);
 ```
 ## Output:
 <image width="600px" src="https://github.com/ts-vadim/Console-Graphics/blob/main/view.png">
+
+## TODO:
+- [x] Добавить цвета
+- [ ] Упростить работу с массивами символов
+- [ ] Добавить отрисовку линий
+- [x] Сделать класс статичным
+- [ ] Дать возможность читать символы с экрана

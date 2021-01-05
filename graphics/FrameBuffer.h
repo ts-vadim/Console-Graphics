@@ -1,13 +1,13 @@
 #pragma once
 
+#include <assert.h>
 
 
 class FrameBuffer
 {
 public:
-	char* buffer = nullptr;
-	unsigned short width = 0;
-	unsigned short height = 0;
+	unsigned short const& width = m_width;
+	unsigned short const& height = m_height;
 
 	FrameBuffer()
 	{
@@ -18,21 +18,75 @@ public:
 	}
 	~FrameBuffer()
 	{
-		delete[] buffer;
+		Destroy();
 	}
 
 	void Create(unsigned short w, unsigned short h)
 	{
-		delete[] buffer;
-		buffer = new char[w * h];
+		Destroy();
+		m_buffer = new CHAR_INFO[w * h];
 		for (int i = 0; i < w * h; i++)
-			buffer[i] = ' ';
-		width = w;
-		height = h;
+		{
+			m_buffer[i].Char.AsciiChar = ' ';
+			m_buffer[i].Attributes = FOREGROUND_INTENSITY;
+		}
+			
+		m_width = w;
+		m_height = h;
 	}
 
-	bool onFrame(int x, int y)
+	void Destroy()
 	{
-		return x >= 0 && x < width && y >= 0 && y < height;
+		delete[] m_buffer;
+		m_buffer = nullptr;
+		m_width = 0;
+		m_height = 0;
 	}
+
+	void Set(unsigned short i, CHAR_INFO c)
+	{
+		assert(m_buffer);
+		if (i < m_width * m_height)
+			m_buffer[i] = c;
+	}
+
+	void Set(unsigned short i, char c)
+	{
+		assert(m_buffer);
+		if (i < m_width * m_height)
+		{
+			m_buffer[i].Char.AsciiChar = c;
+			m_buffer[i].Attributes = FOREGROUND_INTENSITY;
+		}
+	}
+
+	CHAR_INFO Get(unsigned short i)
+	{
+		assert(m_buffer);
+		if (i < m_width * m_height)
+			return m_buffer[i];
+		return { '\0', 0 };
+	}
+
+	const CHAR_INFO* GetData()
+	{
+		return m_buffer;
+	}
+
+	bool OnFrame(int x, int y)
+	{
+		return x >= 0 && x < m_width&& y >= 0 && y < m_height;
+	}
+
+	int Coord2Index(int x, int y)
+	{
+		if (OnFrame(x, y))
+			return m_width * y + x;
+		return -1;
+	}
+
+private:
+	unsigned short m_width = 0;
+	unsigned short m_height = 0;
+	CHAR_INFO* m_buffer = nullptr;
 };

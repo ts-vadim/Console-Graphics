@@ -3,49 +3,72 @@
 #include <Windows.h>
 #include <cstdio>
 #include <stdarg.h>
+#include <assert.h>
 #include "FrameBuffer.h"
-
-class Graphics;
-
-#include "Drawable.h"
-
 
 
 class Graphics
 {
 public:
-	const unsigned short& width = m_frame.width;
-	const unsigned short& height = m_frame.height;
+	enum Color
+	{
+		// brightness levels: intensity, RGB, RGB + intensity
+		ForeBright = FOREGROUND_INTENSITY,
+		ForeWhite = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+		ForeBlack = 0,
+		ForeRed = FOREGROUND_RED,
+		ForeGreen = FOREGROUND_GREEN,
+		ForeBlue = FOREGROUND_BLUE,
+		ForeCyan = FOREGROUND_BLUE | FOREGROUND_GREEN,
+		ForeYellow = FOREGROUND_RED | FOREGROUND_GREEN,
+		ForeMagenta = FOREGROUND_RED | FOREGROUND_BLUE,
+
+		BackBright = BACKGROUND_INTENSITY,
+		BackWhite = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE,
+		BackBlack = 0,
+		BackRed = BACKGROUND_RED,
+		BackGreen = BACKGROUND_GREEN,
+		BackBlue = BACKGROUND_BLUE,
+		BackCyan = BACKGROUND_BLUE | BACKGROUND_GREEN,
+		BackYellow = BACKGROUND_RED | BACKGROUND_GREEN,
+		BackMagenta = BACKGROUND_RED | BACKGROUND_BLUE,
+
+		Inverse = COMMON_LVB_REVERSE_VIDEO,
+		// underscore, line above character, on the left side, on the right
+		Underscore = COMMON_LVB_UNDERSCORE,
+		UpperLine = COMMON_LVB_GRID_HORIZONTAL,
+		LeftLine = COMMON_LVB_GRID_LVERTICAL,
+		RightLine = COMMON_LVB_GRID_RVERTICAL
+	};
+
+public:
+	static const unsigned short& width;
+	static const unsigned short& height;
 
 	static COORD GetConsoleSize();
 
-	Graphics();
-	Graphics(COORD size);
-	~Graphics();
+	static void Begin();
+	static void End();
 
-	void Resize(COORD size);
-	void SetRenderTarget(FrameBuffer* frame);
-	void ReleaseRenderTarget();
+	static void Resize(COORD size);
 
-	void Clear(char c = ' ');
-	void Display();
+	static void Clear(CHAR_INFO c = { ' ', ForeBlack });
+	static void Display();
 
-	void Char(int x, int y, char c);
-	void Rect(RECT area, char fill = '#', char stroke = '#');
-	void Text(int x, int y, const char* format, ...);
-	void Text(int x, int y, int max_length, const char* format, ...);
-	void Frame(FrameBuffer& frame, int x, int y);
-	void Draw(Drawable& frame);
+	static void Char(int x, int y, CHAR_INFO c);
+	static void Rect(RECT area, CHAR_INFO fill = { '#', ForeWhite }, CHAR_INFO stroke = { '#', ForeWhite });
+	static void Text(int x, int y, WORD color, const char* format, ...);
+	static void Text(int x, int y, WORD color, int max_length, const char* format, ...);
+	static void Frame(FrameBuffer& frame, int x, int y);
 
-	void Cursor(int x, int y);
+	static void Cursor(int x, int y);
 
 private:
-	HANDLE m_hconsole;
-	FrameBuffer m_frame;
-	FrameBuffer* m_rendertarget = &m_frame;
-	CHAR_INFO* m_output_screen = nullptr;
+	static bool m_graphics_created;
+	static HANDLE m_hconsole;
+	static FrameBuffer m_frame;
 	/*	Format text output	*/
-	static const int max_text_length = 100;
-	char m_text_buffer[max_text_length];
+	static const int m_max_text_length;
+	static char m_text_buffer[];
 };
 
