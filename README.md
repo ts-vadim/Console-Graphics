@@ -6,6 +6,13 @@ Simple classes for drawing in console.
 - [FrameBuffer](https://github.com/ts-vadim/Console-Graphics/blob/main/FrameBuffer.md)
 - [Drawable](https://github.com/ts-vadim/Console-Graphics/blob/main/Drawable.md)
 
+## TODO:
+[] Добавить цвета
+[] Упростить работу с массивами символов
+[] Добавить отрисовку линий
+[] Сделать класс статичным
+[] Дать возможность читать символы с экрана
+
 ## Example:
 ```c++
 Graphics graphics;
