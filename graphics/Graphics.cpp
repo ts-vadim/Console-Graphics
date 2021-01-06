@@ -63,6 +63,16 @@ void Graphics::Display()
 }
 
 
+void Graphics::ColorChar(int x, int y, WORD color, bool addColor)
+{
+	assert(m_graphics_created);
+	if (addColor)
+		m_frame.SetAttr(m_frame.Coord2Index(x, y), m_frame.Get(m_frame.Coord2Index(x, y)).Attributes | color);
+	else
+		m_frame.SetAttr(m_frame.Coord2Index(x, y), color);
+}
+
+
 void Graphics::Char(int x, int y, CHAR_INFO c)
 {
 	assert(m_graphics_created);
@@ -139,4 +149,10 @@ void Graphics::Cursor(int x, int y)
 {
 	assert(m_graphics_created);
 	SetConsoleCursorPosition(m_hconsole, { (short)x, (short)y });
+}
+
+
+CHAR_INFO Graphics::GetChar(int x, int y)
+{
+	return m_frame.Get(m_frame.Coord2Index(x, y));
 }

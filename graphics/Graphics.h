@@ -55,6 +55,7 @@ public:
 	static void Clear(CHAR_INFO c = { ' ', ForeBlack });
 	static void Display();
 
+	static void ColorChar(int x, int y, WORD color, bool addColor = false);
 	static void Char(int x, int y, CHAR_INFO c);
 	static void Rect(RECT area, CHAR_INFO fill = { '#', ForeWhite }, CHAR_INFO stroke = { '#', ForeWhite });
 	static void Text(int x, int y, WORD color, const char* format, ...);
@@ -62,6 +63,8 @@ public:
 	static void Frame(FrameBuffer& frame, int x, int y);
 
 	static void Cursor(int x, int y);
+
+	static CHAR_INFO GetChar(int x, int y);
 
 private:
 	static bool m_graphics_created;

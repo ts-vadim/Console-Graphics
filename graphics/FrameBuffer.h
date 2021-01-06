@@ -43,21 +43,29 @@ public:
 		m_height = 0;
 	}
 
-	void Set(unsigned short i, CHAR_INFO c)
+	void SetAttr(unsigned short i, WORD attr)
 	{
 		assert(m_buffer);
 		if (i < m_width * m_height)
+			m_buffer[i].Attributes = attr;
+	}
+
+	void Set(unsigned short i, CHAR_INFO c, bool addColor = false)
+	{
+		assert(m_buffer);
+		if (i < m_width * m_height)
+		{
+			if (addColor)
+				c.Attributes |= m_buffer[i].Attributes;
 			m_buffer[i] = c;
+		}
 	}
 
 	void Set(unsigned short i, char c)
 	{
 		assert(m_buffer);
 		if (i < m_width * m_height)
-		{
 			m_buffer[i].Char.AsciiChar = c;
-			m_buffer[i].Attributes = FOREGROUND_INTENSITY;
-		}
 	}
 
 	CHAR_INFO Get(unsigned short i)
